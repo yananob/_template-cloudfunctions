@@ -59,6 +59,7 @@ $firestore = new FirestoreClient([
 - **命名規則**:
   - PHP/JavaScript の変数・メソッド名は `camelCase`。
   - クラス名は `PascalCase`。
+- **CSS**: Tailwind CSS をデフォルトとして使用してください。
 - **環境の識別**:
   - テスト環境では、本番環境と区別しやすくするため、画面上部に現在のベースパスとリクエストパスをオーバーレイで表示します。
 - **デプロイとシークレット**:
