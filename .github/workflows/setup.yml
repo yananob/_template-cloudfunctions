@@ -9,11 +9,11 @@ on:
       template_repo_url:
         description: 'URL of the template repository for _template submodule'
         required: true
-        default: 'https://github.com/yananob/_template-cloud-functions'
+        default: 'git@github.com:yananob/cloud-functions-common'
       common_repo_url:
         description: 'URL of the common repository for _cf-common submodule'
         required: true
-        default: 'https://github.com/yananob/cloud-functions-common'
+        default: 'git@github.com:yananob/_template-cloudfunctions'
 
 jobs:
   initialize:
@@ -50,8 +50,8 @@ jobs:
 
       - name: Self-destruct
         run: |
-          rm .github/workflows/init.yml
-          git add .github/workflows/init.yml
+          rm .github/workflows/setup.yml
+          git add .github/workflows/setup.yml
           git commit -m "Self-destruct initialization workflow"
 
       - name: Push changes
