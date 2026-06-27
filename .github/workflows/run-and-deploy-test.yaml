@@ -63,7 +63,7 @@ jobs:
 
     - name: Install dependencies (Composer)
       run: composer install --prefer-dist --no-progress
-    
+
     # - name: Install dependencies (NPM)
     #   run: npm install --prefer-offline --no-audit --progress=false
 
