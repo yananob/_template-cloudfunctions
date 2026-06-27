@@ -7,12 +7,15 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: {{VALUES_FUNCTION_NAME}}-deploy-production
+  group: ${{ vars.FUNCTION_NAME || '{{VALUES_FUNCTION_NAME}}' }}-deploy-production
   cancel-in-progress: true
 
 permissions:
   contents: 'read'
   id-token: 'write'
+
+env:
+  FUNCTION_NAME: ${{ vars.FUNCTION_NAME || '{{VALUES_FUNCTION_NAME}}' }}
 
 jobs:
   prepare:
@@ -24,9 +27,9 @@ jobs:
         id: set_name
         run: |
           # if [ -n "${{ github.event.pull_request.number }}" ]; then
-          #   echo "function_name={{VALUES_FUNCTION_NAME}}${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          #   echo "function_name=${{ env.FUNCTION_NAME }}${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           # else
-            echo "function_name={{VALUES_FUNCTION_NAME}}" >> $GITHUB_OUTPUT
+            echo "function_name=${{ env.FUNCTION_NAME }}" >> $GITHUB_OUTPUT
           # fi
 
   deploy:
@@ -41,7 +44,7 @@ jobs:
       secrets_config: |-
         SECRET_KEYS
       # gcs_source_dir: ./public/
-      # gcs_bucket_name: {{VALUES_FUNCTION_NAME}}-static
+      # gcs_bucket_name: ${{ env.FUNCTION_NAME }}-static
       # gcs_bucket_path: test
       # disable_gcs_cache: true
       deploy_http_trigger: true
