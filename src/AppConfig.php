@@ -20,7 +20,17 @@ class AppConfig
      */
     public static function getEnvironment(): string
     {
-        return getenv('APP_ENV');
+        return getenv('APP_ENV') ?: 'local';
+    }
+
+    /**
+     * アプリケーション名を取得します。
+     *
+     * @return string アプリケーション名。
+     */
+    public static function getAppName(): string
+    {
+        return getenv('APP_NAME') ?: 'template-app';
     }
 
     /**
@@ -30,14 +40,14 @@ class AppConfig
      */
     public static function getFirestoreRootCollection(): string
     {
+        $appName = self::getAppName();
         return match (self::getEnvironment()) {
-            'production' => '{APP-NAME}',
-            'test' => '{APP-NAME}-test',
-            default => '{APP-NAME}-test',
+            'production' => $appName,
+            'test' => "{$appName}-test",
+            default => "{$appName}-local",
         };
     }
 
-    
     /**
      * アプリケーションのベースパスを取得します。
      *
@@ -45,10 +55,21 @@ class AppConfig
      */
     public static function getBasePath(): string
     {
+        $appName = self::getAppName();
         return match (self::getEnvironment()) {
-            'production' => '/{APP-NAME}',
-            'test' => '/{APP-NAME}-test',
+            'production' => "/{$appName}",
+            'test' => "/{$appName}-test",
             default => '',
         };
+    }
+
+    /**
+     * デバッグモードかどうかを取得します。
+     *
+     * @return bool デバッグモードの場合はtrue。
+     */
+    public static function isDebug(): bool
+    {
+        return self::getEnvironment() !== 'production';
     }
 }
