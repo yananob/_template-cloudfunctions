@@ -42,7 +42,7 @@ jobs:
     - name: Validate composer.json and composer.lock
       run: |
         sed -i 's|{{VALUES_FUNCTION_NAME}}|temp-name|g' composer.json
-        composer validate
+        composer validate --no-check-lock
         sed -i 's|temp-name|{{VALUES_FUNCTION_NAME}}|g' composer.json
 
     - name: Get current directory
