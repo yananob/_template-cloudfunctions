@@ -60,8 +60,37 @@ jobs:
       GCP_REGION: ${{ secrets.GCP_REGION }}
       GCP_PROJECT_NUMBER: ${{ secrets.GCP_PROJECT_NUMBER }}
 
-  comment:
+  setup-iap:
     needs: [prepare, deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Google Cloud認証
+        id: 'auth'
+        uses: 'google-github-actions/auth@v3'
+        with:
+          workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider'
+          service_account: 'cloud-run-functions-deployer@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com'
+
+      - name: 'Enable IAP for Cloud Run Service'
+        shell: bash
+        run: |
+          gcloud run services update ${{ needs.prepare.outputs.function_name }} \
+            --iap \
+            --no-allow-unauthenticated \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --region=${{ secrets.GCP_REGION }}
+
+      - name: 'Grant IAP Service Agent Invoker Role'
+        shell: bash
+        run: |
+          gcloud run services add-iam-policy-binding ${{ needs.prepare.outputs.function_name }} \
+            --member="serviceAccount:service-${{ secrets.GCP_PROJECT_NUMBER }}@gcp-sa-iap.iam.gserviceaccount.com" \
+            --role="roles/run.invoker" \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --region=${{ secrets.GCP_REGION }}
+
+  comment:
+    needs: [prepare, deploy, setup-iap]
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     env:
