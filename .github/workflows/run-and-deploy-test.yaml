@@ -40,7 +40,10 @@ jobs:
         extensions: grpc
 
     - name: Validate composer.json and composer.lock
-      run: composer validate
+      run: |
+        sed -i 's|{{VALUES_FUNCTION_NAME}}|temp-name|g' composer.json
+        composer validate
+        sed -i 's|temp-name|{{VALUES_FUNCTION_NAME}}|g' composer.json
 
     - name: Get current directory
       id: current_dir
@@ -65,7 +68,10 @@ jobs:
     #       ${{ runner.os }}-npm-
 
     - name: Install dependencies (Composer)
-      run: composer install --prefer-dist --no-progress
+      run: |
+        sed -i 's|{{VALUES_FUNCTION_NAME}}|temp-name|g' composer.json
+        composer install --prefer-dist --no-progress --ignore-platform-req=ext-grpc
+        sed -i 's|temp-name|{{VALUES_FUNCTION_NAME}}|g' composer.json
 
     # - name: Install dependencies (NPM)
     #   run: npm install --prefer-offline --no-audit --progress=false

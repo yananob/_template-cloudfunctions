@@ -30,10 +30,16 @@ jobs:
         extensions: grpc
 
     - name: Validate composer.json and composer.lock
-      run: composer validate
+      run: |
+        sed -i 's|{{VALUES_FUNCTION_NAME}}|temp-name|g' composer.json
+        composer validate
+        sed -i 's|temp-name|{{VALUES_FUNCTION_NAME}}|g' composer.json
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --ignore-platform-req=ext-grpc
+      run: |
+        sed -i 's|{{VALUES_FUNCTION_NAME}}|temp-name|g' composer.json
+        composer install --prefer-dist --no-progress --ignore-platform-req=ext-grpc
+        sed -i 's|temp-name|{{VALUES_FUNCTION_NAME}}|g' composer.json
 
     - name: Run Linter (PHPStan)
       run: bash tests/run_linter.sh
