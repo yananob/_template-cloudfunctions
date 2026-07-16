@@ -1,0 +1,42 @@
+name: CI (Lint & Test)
+
+on:
+  pull_request:
+    branches:
+      - main
+      - test
+  push:
+    branches:
+      - main
+      - test
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+      with:
+        submodules: 'true'
+
+    - name: Set up PHP 8.2
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: "8.2"
+        extensions: grpc
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --ignore-platform-req=ext-grpc
+
+    - name: Run Linter (PHPStan)
+      run: bash tests/run_linter.sh
+
+    - name: Run Tests (PHPUnit)
+      run: bash tests/run_tests.sh

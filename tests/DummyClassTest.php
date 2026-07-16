@@ -7,4 +7,8 @@ use App\DummyClass;
 
 final class DummyClassTest extends TestCase
 {
+    public function testTrue(): void
+    {
+        $this->assertTrue(true);
+    }
 }
