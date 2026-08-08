@@ -104,7 +104,7 @@ jobs:
       wip_provider_name: 'github-provider'
       runtime: php82
       secrets_config: |-
-        {{SECRET_KEYS}}
+        FIREBASE_SERVICE_ACCOUNT
       # gcs_source_dir: ./public/
       # gcs_bucket_name: ${{ env.FUNCTION_NAME }}-static
       # gcs_bucket_path: test
