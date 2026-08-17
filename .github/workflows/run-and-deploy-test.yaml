@@ -81,6 +81,7 @@ jobs:
       run: bash tests/run_tests.sh
 
   prepare-deploy:
+    needs: [test]
     runs-on: ubuntu-latest
     outputs:
       function_name: ${{ steps.set_name.outputs.function_name }}
@@ -95,7 +96,7 @@ jobs:
           # fi
 
   deploy:
-    needs: [prepare-deploy, test]
+    needs: [prepare-deploy]
     uses: yananob/cloud-functions-common/.github/workflows/deploy-cloud-functions.yaml@main
     with:
       function_name: ${{ needs.prepare-deploy.outputs.function_name }}
@@ -123,7 +124,7 @@ jobs:
       GCP_PROJECT_NUMBER: ${{ secrets.GCP_PROJECT_NUMBER }}
 
   comment:
-    needs: [deploy, prepare-deploy]
+    needs: [deploy]
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     env:
