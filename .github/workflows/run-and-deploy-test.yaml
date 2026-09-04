@@ -81,6 +81,7 @@ jobs:
       run: bash tests/run_tests.sh
 
   prepare-deploy:
+    needs: [test]
     runs-on: ubuntu-latest
     outputs:
       function_name: ${{ steps.set_name.outputs.function_name }}
@@ -95,8 +96,8 @@ jobs:
           # fi
 
   deploy:
-    needs: [prepare-deploy, test]
-    uses: yananob/cloud-functions-common/.github/workflows/deploy-cloud-functions.yaml@main
+    needs: [prepare-deploy]
+    uses: yananob/myapps-common/.github/workflows/deploy-cloud-functions.yaml@main
     with:
       function_name: ${{ needs.prepare-deploy.outputs.function_name }}
       service_account_name: 'cloud-run-functions-deployer'
