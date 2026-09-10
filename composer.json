@@ -1,6 +1,6 @@
 {
-    "name": "yananob/{{VALUES_FUNCTION_NAME}}",
-    "description": "yananob/{{VALUES_FUNCTION_NAME}}",
+    "name": "yananob/_template-cloudfunction",
+    "description": "yananob/_template-cloudfunction",
     "license": "proprietary",
 
     "require": {
