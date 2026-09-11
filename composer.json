@@ -1,13 +1,13 @@
 {
-    "name": "yananob/_template-cloudfunction",
-    "description": "yananob/_template-cloudfunction",
+    "name": "yananob/_template-cloudfunctions",
+    "description": "yananob/_template-cloudfunctions",
     "license": "proprietary",
 
     "require": {
         "php": "~8.2.0",
         "google/cloud-functions-framework": "^1.3",
         "google/protobuf": "^4.33",
-        "google/cloud-firestore": "^1.37",
+        "google/cloud-firestore": "^2.3.1",
         "guzzlehttp/guzzle": "^7.8",
         "nesbot/carbon": "^3.8",
         "monolog/monolog": "^3.10",
