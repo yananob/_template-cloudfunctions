@@ -1,12 +1,12 @@
 # {{VALUES_FUNCTION_NAME}}
 
-Google Cloud Functions (PHP 8.2) 上で動作するアプリケーションのベーステンプレートリポジトリです。
+Google Cloud Functions (PHP 8.4) 上で動作するアプリケーションのベーステンプレートリポジトリです。
 
 ---
 
 ## 主な特徴とアーキテクチャ
 
-- **ランタイム**: PHP 8.2 (Google Cloud Functions Framework for PHP)
+- **ランタイム**: PHP 8.4 (Google Cloud Functions Framework for PHP)
 - **データベース**: Google Cloud Firestore (Native Mode)
 - **ロギング**: Monolog による標準出力（Cloud Logging）ログ出力
 - **アーキテクチャ**:
