@@ -6,6 +6,7 @@ namespace Tests\Handlers;
 
 use App\Handlers\EventHandler;
 use CloudEvents\V1\CloudEventInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
@@ -33,7 +34,7 @@ class EventHandlerTest extends TestCase
 
         $eventHandler = new EventHandler($testLogger);
 
-        /** @var CloudEventInterface $eventMock */
+        /** @var CloudEventInterface&MockObject $eventMock */
         $eventMock = $this->createMock(CloudEventInterface::class);
 
         $eventHandler->handle($eventMock);
@@ -47,7 +48,7 @@ class EventHandlerTest extends TestCase
     {
         $eventHandler = new EventHandler();
 
-        /** @var CloudEventInterface $eventMock */
+        /** @var CloudEventInterface&MockObject $eventMock */
         $eventMock = $this->createMock(CloudEventInterface::class);
 
         $eventHandler->handle($eventMock);
