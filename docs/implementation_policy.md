@@ -61,10 +61,18 @@ Firestore へのアクセスには、Application Default Credentials (ADC) や G
 
 ### ライブラリの初期化例
 
-Google Cloud PHP クライアントライブラリを使用する場合、引数なしで初期化します。
+`FirestoreClient` の生成処理は一箇所にまとめ、各処理から個別に生成しないでください。初期化時は `transport` に `rest` を指定します。ローカル環境の場合のみ、`gcloud config get-value project` で取得したプロジェクトIDを `projectId` として同じコンストラクター設定に追加します。
 
 ```php
-$firestore = new FirestoreClient();
+$firestoreConfig = [
+    'transport' => 'rest',
+];
+
+if (AppConfig::isLocal()) {
+    $firestoreConfig['projectId'] = AppConfig::getFirestoreProjectId();
+}
+
+$firestore = new FirestoreClient($firestoreConfig);
 ```
 
 ---
