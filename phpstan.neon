@@ -3,11 +3,12 @@ parameters:
     paths:
         - .
     excludePaths:
-        - vendor
-        - node_modules
-        - templates_c
-        - _deploy
-        - _template
-        - _myapps-common
+        analyseAndScan:
+            - vendor
+            - node_modules (?)
+            - templates_c (?)
+            - _deploy (?)
+            - _template (?)
+            - _myapps-common (?)
 
     treatPhpDocTypesAsCertain: false

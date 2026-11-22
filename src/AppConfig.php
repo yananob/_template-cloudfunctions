@@ -22,6 +22,15 @@ class AppConfig
     public static function getEnvironment(): string
     {
         $env = getenv('APP_ENV');
+        if (is_string($env) && $env !== '') {
+            return $env;
+        }
+
+        $superEnv = $_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? null;
+        if (is_string($superEnv) && $superEnv !== '') {
+            return $superEnv;
+        }
+
         return is_string($env) ? $env : '';
     }
 
@@ -99,16 +108,102 @@ class AppConfig
             if (is_string($val) && trim($val) !== '') {
                 return trim($val);
             }
+
+            $superVal = $_ENV[$var] ?? $_SERVER[$var] ?? null;
+            if (is_string($superVal) && trim($superVal) !== '') {
+                return trim($superVal);
+            }
         }
 
-        $output = [];
-        $exitCode = 1;
-        exec('gcloud config get-value project 2>/dev/null', $output, $exitCode);
-        $projectId = trim(implode("\n", $output));
-        if ($exitCode === 0 && $projectId !== '' && $projectId !== '(unset)') {
-            return $projectId;
+        if (function_exists('exec')) {
+            $output = [];
+            $exitCode = 1;
+            exec('gcloud config get-value project 2>/dev/null', $output, $exitCode);
+            $projectId = trim(implode("\n", $output));
+            if ($exitCode === 0 && $projectId !== '' && $projectId !== '(unset)') {
+                return $projectId;
+            }
         }
 
         throw new RuntimeException('Could not get Firestore project ID.');
+    }
+
+    /**
+     * LINE 送信設定 (LINE_TOKENS_N_TARGETS) をパースして取得します。
+     *
+     * @return array{tokens: array<string, string>, target_ids: array<string, string>} トークンと送信先IDのマッピング
+     * @throws RuntimeException JSONのパースに失敗した場合や形式が不正な場合
+     */
+    public static function getLineConfig(): array
+    {
+        $raw = getenv('LINE_TOKENS_N_TARGETS');
+        if (!is_string($raw) || trim($raw) === '') {
+            $raw = $_ENV['LINE_TOKENS_N_TARGETS'] ?? $_SERVER['LINE_TOKENS_N_TARGETS'] ?? null;
+        }
+
+        if (!is_string($raw) || trim($raw) === '') {
+            return [
+                'tokens' => [],
+                'target_ids' => [],
+            ];
+        }
+
+        try {
+            $decoded = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new RuntimeException('LINE_TOKENS_N_TARGETS is not valid JSON: ' . $e->getMessage(), 0, $e);
+        }
+
+        if (!is_array($decoded)) {
+            throw new RuntimeException('LINE_TOKENS_N_TARGETS must decode to an array.');
+        }
+
+        $tokens = isset($decoded['tokens']) && is_array($decoded['tokens']) ? $decoded['tokens'] : [];
+        $targetIds = isset($decoded['target_ids']) && is_array($decoded['target_ids']) ? $decoded['target_ids'] : [];
+
+        /** @var array<string, string> $stringTokens */
+        $stringTokens = [];
+        foreach ($tokens as $k => $v) {
+            if (is_string($k) && (is_scalar($v) || $v === null)) {
+                $stringTokens[$k] = (string) $v;
+            }
+        }
+
+        /** @var array<string, string> $stringTargetIds */
+        $stringTargetIds = [];
+        foreach ($targetIds as $k => $v) {
+            if (is_string($k) && (is_scalar($v) || $v === null)) {
+                $stringTargetIds[$k] = (string) $v;
+            }
+        }
+
+        return [
+            'tokens' => $stringTokens,
+            'target_ids' => $stringTargetIds,
+        ];
+    }
+
+    /**
+     * 指定されたキーの LINE チャネルアクセストークンを取得します。
+     *
+     * @param string $key ボット識別子 (例: 'oml', 'nobu')
+     * @return string|null チャネルアクセストークン。未設定時は null
+     */
+    public static function getLineToken(string $key): ?string
+    {
+        $config = self::getLineConfig();
+        return $config['tokens'][$key] ?? null;
+    }
+
+    /**
+     * 指定されたキーの LINE 送信先IDを取得します。
+     *
+     * @param string $key ボット識別子 (例: 'oml', 'nobu')
+     * @return string|null 送信先ID。未設定時は null
+     */
+    public static function getLineTargetId(string $key): ?string
+    {
+        $config = self::getLineConfig();
+        return $config['target_ids'][$key] ?? null;
     }
 }

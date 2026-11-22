@@ -12,7 +12,9 @@ Google Cloud Functions (PHP 8.4) 上で動作するアプリケーションの�
 - **アーキテクチャ**:
   - `index.php`: Google Cloud Functions のエントリポイント
   - `src/Handlers/`: HTTP リクエストおよび CloudEvent の処理ロジック
-  - `src/AppConfig.php`: アプリケーション環境設定の抽象化
+  - `src/Utils/`: ロガー（`LoggerUtil`）や Blade テンプレートエンジン（`View`）などの共通ユーティリティ
+  - `src/AppConfig.php`: アプリケーション環境設定および LINE 設定等の抽象化
+  - `views/`: Blade テンプレートファイル
 
 ---
 
@@ -28,9 +30,15 @@ Google Cloud Functions (PHP 8.4) 上で動作するアプリケーションの�
 │   ├── Handlers/         # HTTP / CloudEvent ハンドラー
 │   │   ├── EventHandler.php
 │   │   └── HttpHandler.php
+│   ├── Utils/            # 共通ユーティリティ
+│   │   ├── LoggerUtil.php
+│   │   └── View.php
 │   └── AppConfig.php     # 設定・環境変数管理クラス
+├── views/                # BladeOne テンプレート
+│   └── hello.blade.php
 ├── tests/                # テストコードおよびローカル実行用スクリプト
 │   ├── Handlers/         # ハンドラーのユニットテスト
+│   ├── Utils/            # ユーティリティのユニットテスト
 │   ├── AppConfigTest.php # 設定クラスのユニットテスト
 │   ├── run_linter.sh     # PHPStan 静的解析スクリプト
 │   └── run_tests.sh      # テスト実行スクリプト
