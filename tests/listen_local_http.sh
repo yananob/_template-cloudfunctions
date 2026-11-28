@@ -2,6 +2,9 @@
 set -eu
 
 source ./tests/secrets.sh
+if [ -f "./tests/local.env" ]; then
+    source ./tests/local.env
+fi
 if [ -d "./_myapps-common" ]; then
     source ./_myapps-common/test/export_secrets.sh ${SECRETS[*]}
 fi
